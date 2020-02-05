@@ -217,25 +217,32 @@ public class CPU {
 				// since the syntax has the memory location in the 2nd position we can check
 				// with the PC to see if we are reading the correct next line in the program 
 			} else if (i == 1) {
-				if (code[i].equals(PC)) { // testing if we are on the proper line
+				// if the program counter is equal to the current memory location (in HEX) we finish 
+				// executing the line and we increase the PC by one for the next instruction;
+				if (code[i].equals(PC)) {
 					PC = Integer.toHexString(Integer.parseInt(PC, 16) + 1).toUpperCase();
 				} else if (Integer.parseInt(code[i], 16) < Integer.parseInt(PC, 16)) {
-					i = code.length;
+					i = code.length; // if we are not equal we skip the rest of the code and
+							 // end the line so we can move on to the next line
 				}
 
-				// since the proper syntax requires the instruction to be next and we catch all
-				// comments we can take the current memory location's instruction and put it
-				// into the IR
+				// since the proper syntax requires the instruction to be in the 3rd position 
+				// and we catch all comments first, we can take the current memory location's 
+				// instruction and put it into the IR and execute it.
 			} else {
-				count++;
+				count++; //we increase the count of executed commands by one
+				
+				//we set our IR to the current line instruction code.
 				this.IR = code[2];
+				//Now we split up the IR into the two parts, OPcode and Memory Location so we 
+				//have easily execute values
 				String opCode = this.IR.substring(0, 1);
 				String memLoc = this.IR.substring(1, 4);
 
-				// Here we check the OPCodes and execute the proper procedure for that OPCode;
-				if (opCode.contentEquals("0")) {
-					mem.memSet(code[1], Integer.parseInt(memLoc));
-				} else if (opCode.equals("1")) { // load AC from MemLoc
+				// Here we check the OPCodes and execute the proper procedure for that OPCode.
+				// Note we skip opCode 0 because we already have tested for that case and there
+				// should be no more left in our code
+				if (opCode.equals("1")) { // load AC from MemLoc
 					this.AC = mem.memGet(memLoc);
 				} else if (opCode.equals("2")) { // Store AC from MemLoc
 					mem.memSet(memLoc, this.AC);
@@ -256,14 +263,25 @@ public class CPU {
 				} else if (opCode.equals("A")) { // Divide AC by REG (integer division)
 					this.AC = this.AC / this.REG;
 				} else if (opCode.equals("B")) { // Jump to a Subroutine starting at memLoc
-					this.rtn++;
+					this.rtn++; // We increase the amount of subroutines that have been run.
+					
+					//Now we push the register to the stack in the correct order PC,IR,AC,REG
 					reg.push(this.PC);
 					reg.push(this.IR);
 					reg.push(Integer.toString(this.AC));
 					reg.push(Integer.toString(this.REG));
+					
+					// Now the stack has been pushed we take the target PC and set it to the
+					// current PC that we are wanting to start at.
 					this.PC = memLoc;
+					
 				} else if (opCode.equals("C")) { // Return from subroutine
+					// We set the boolean reset to be true so that we read everyline again so we can catch
+					// the memory locations we skipped with the PC.
 					this.reset = true;
+					
+					// We write that we are exiting the proper subroutine to the output file and 
+					//use the writeData() method to put the needed data to memory.
 					bw.write("\n======Before return from Subroutine " + rtn + " Status=======\n");
 					this.writeData(mem, bw, reg);
 				} else if (opCode.equals("F")) { // Halt Program
@@ -271,7 +289,8 @@ public class CPU {
 					this.writeData(mem, bw, reg);
 					this.isRunning = false;
 				} else {
-					count--;
+					count--; // if we did not execute any commands we remove a number from the count
+						 // since we did not execute.
 				}
 			}
 		}
