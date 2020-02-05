@@ -1,0 +1,51 @@
+==================
+===Main Program=====
+===At end, hexadecimal values: AC=50, Reg=14, PC=30D, IR=F000, 940=3, 941=5, 942=50
+===At end, number of instructions executed = 31 (decimal)
+==================
+1.  300 1940 ;load AC from memory 940 - AC has value 3
+2.  301 5941 ;add to AC from memory 941 - AC has value 5
+3.  302 2941 ;store AC in memory 941 - 941 has value 5
+4.  303 6000 ;load register with 0
+5.  304 3000 ;load AC from register - AC is now 0
+6.  305 2942 ;store AC to memory 942 - 942 is now 0
+7.  306 BA00 ;branch to subroutine starting at address A00
+8.  307 BA0A ;branch to subroutine starting at A0A
+9.  308 1942 ;load AC from memory 942 - AC is decimal 60 (line 8 subroutine 2)
+10. 309 6014 ;load register with 0x14 = decimal 20
+11. 30A 7000 ;add register to AC - AC is now decimal 80
+12. 30B 2942 ;store AC in memory 942 - 942 is now decimal 80, hex 50
+13. 30C F000 ;halt program
+========= ;code separator
+===== Subroutine 1 =====
+===At end, hexadecimal values: AC=A, Reg=A, PC=A09, IR=C000, 940=3, 941=5, 942=A
+===At end, number of instructions executed = 16 (decimal)
+==========
+1. A00 6001 ;load register with 1
+2. A01 3000 ;load AC from register - AC is now 1
+3. A02 6009 ;load register with 9
+4. A03 7000 ;add register to AC - AC is now decimal 10, hex A
+5. A04 4000 ;store AC in register - register is now decimal 10
+6. A05 1942 ;load AC from memory 942 - AC is now 0 (942 is already 0)
+7. A06 7000 ;add register to AC - AC is now decimal 10
+8. A07 2942 ;store AC in memory 942 - 942 is now decimal 10
+9. A08 C000 ;return from subroutine
+=========
+==== Subroutine 2 =====
+===At end, hexadecimal values: AC=3C, Reg=32, PC=A13, IR=C000, 940=3, 941=5, 942=3C
+===At end, number of instructions executed = 26 (decimal)
+=================
+1. A0A 6005 ;load register with 5
+2. A0B 3000 ;load AC from register - AC is now 5
+3. A0C 600A ;load register with A - decimal 10
+4. A0D 8000 ;multiply AC with register - AC is now decimal 50
+5. A0E 4000 ;store AC to register - register is now decimal 50
+6. A0F 1942 ;load AC from memory 942 - AC is now decimal 10
+7. A10 7000 ;add register to AC - AC is now decimal 60
+8. A11 2942 ;store AC to memory 942 - 942 is now decimal 60
+9. A12 C000 ;return from subroutine
+=========
+=== Memory Data ====
+=========
+1. 940 0003 ;memory location 940 has value 3
+2. 941 0002 ;memory location 941 has value 2

@@ -1,0 +1,47 @@
+====================
+===Main Program=====
+===At end, hexadecimal values: AC=1B, Reg=15, PC=30D, IR=F000, 940=6, 941=F, 942=1B
+===At end, number of instructions executed = 26 (decimal)
+==================
+1.  300 1940 ;load AC from memory 940 - AC has value decimal 10
+2.  301 5941 ;add to AC from memory 941 - AC has value decimal 15
+3.  302 2941 ;store AC in memory 941 - 941 has value decimal 15
+4.  303 6003 ;load register with 3
+5.  304 3000 ;load AC from register - AC is now 3
+6.  305 2942 ;store AC to memory 942 - 942 is now 3
+7.  306 BA00 ;branch to subroutine starting at address A00
+8.  307 BA0A ;branch to subroutine starting at A0A
+9.  308 1942 ;load AC from memory 942 - AC is decimal 6
+10. 309 6015 ;load register with 0x15 = decimal 21
+11. 30A 7000 ;add register to AC - AC is now decimal 27
+12. 30B 2942 ;store AC in memory 942 - 942 is now decimal 27, hex 1B
+13. 30C F000 ;halt program
+========================
+===== Subroutine 1 =====
+===At end, hexadecimal values: AC=6, Reg=4, PC=A06, IR=C000, 940=A, 941=F, 942=6
+===At end, number of instructions executed = 13 (decimal)
+========================
+1. A00 600A ;load register with decimal 10
+2. A01 3000 ;load AC from register - AC is decimal 10
+3. A02 6004 ;load register with decimal 4
+4. A03 9000 ;subtract register from AC - AC is now 6
+5. A04 2942 ;store AC in memory 942 - memory 942 is now 6
+6. A05 C000 ;return from subroutine
+=========
+==== Subroutine 2 =====
+===At end, hexadecimal values: AC=6, Reg=A, PC=A11, IR=C000, 940=6, 941=F, 942=6
+===At end, number of instructions executed = 21 (decimal)
+=================
+1. A0A 6004 ;load register with 4
+2. A0B 1941 ;load AC from memory 941 - AC has value decimal 15
+3. A0C 8000 ;multiply AC with register - AC is now decimal 60
+4. A0D 600A ;load register with A - decimal 10
+5. A0E A000 ;divide AC with register - AC is now decimal 6
+6. A0F 2940 ;store AC to memory 940 - memory 940 is now decimal 6
+7. A10 C000 ;return from subroutine
+=========
+=== Memory Data ====
+=========
+1. 940 000A ;memory location 940 has value 10
+2. 941 0005 ;memory location 941 has value 5
+3. 942 0001 ;memory location 942 has value 1

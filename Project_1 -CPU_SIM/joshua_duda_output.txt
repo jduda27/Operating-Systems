@@ -1,0 +1,45 @@
+
+======Before return from Subroutine 1 Status=======
+=============Registers & Memory Status=============
+Accumulator = 6
+Register = 4
+PC = A06
+IR = C000
+Memory 940: A
+Memory 941: F
+Memory 942: 6
+Number of instructions executed: 13
+=============Stack Status=============
+Stack contents at 3FC = 3
+Stack contents at 3FD = 3
+Stack contents at 3FE = BA00
+Stack contents at 3FF = 307
+
+======Before return from Subroutine 2 Status=======
+=============Registers & Memory Status=============
+Accumulator = 6
+Register = A
+PC = A11
+IR = C000
+Memory 940: 6
+Memory 941: F
+Memory 942: 6
+Number of instructions executed: 21
+=============Stack Status=============
+Stack contents at 3FC = 3
+Stack contents at 3FD = 3
+Stack contents at 3FE = BA0A
+Stack contents at 3FF = 308
+
+End of Program Status
+=============Registers & Memory Status=============
+Accumulator = 1B
+Register = 15
+PC = 30D
+IR = F000
+Memory 940: 6
+Memory 941: F
+Memory 942: 1B
+Number of instructions executed: 26
+=============Stack Status=============
+No Data in Stack!
