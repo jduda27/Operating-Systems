@@ -1,3 +1,9 @@
+/** Operating Systems Project 1
+*   A CPU class that works with a stack and a memory object to execute a input file
+*   producing an output file.
+*   @Author Joshua Duda
+*   @Date 2/5/2020
+*/
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,7 +14,8 @@ import java.io.FileWriter;
 
 public class CPU {
 
-	private int AC = 0;
+	//bellow are all of the private variables the CPU needs to operate
+	private int AC;
 	private int REG;
 	private Boolean isRunning;
 	private Boolean reset;
@@ -281,12 +288,17 @@ public class CPU {
 					this.reset = true;
 					
 					// We write that we are exiting the proper subroutine to the output file and 
-					//use the writeData() method to put the needed data to memory.
+					// use the writeData() method to put the needed data to memory.
 					bw.write("\n======Before return from Subroutine " + rtn + " Status=======\n");
 					this.writeData(mem, bw, reg);
 				} else if (opCode.equals("F")) { // Halt Program
+					
+					// We write to the output file that the program has ended and use writeData()
+					// nethod to put the needed data to memory.
 					bw.write("\nEnd of Program Status\n");
 					this.writeData(mem, bw, reg);
+					
+					//sset the isRunning boolean to false to stop executing code
 					this.isRunning = false;
 				} else {
 					count--; // if we did not execute any commands we remove a number from the count
