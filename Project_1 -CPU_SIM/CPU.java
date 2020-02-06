@@ -276,11 +276,20 @@ public class CPU {
 				} else if (opCode.equals("B")) { // Jump to a Subroutine starting at memLoc
 					this.rtn++; // We increase the amount of subroutines that have been run.
 					
-					//Now we push the register to the stack in the correct order PC,IR,AC,REG
-					reg.push(this.PC);
-					reg.push(this.IR);
-					reg.push(Integer.toString(this.AC));
-					reg.push(Integer.toString(this.REG));
+					// Now we push the register to the stack in the correct order PC,IR,AC,REG if
+					// the stack is not full.
+					if(!reg.isFull()){
+						reg.push(this.PC);
+						reg.push(this.IR);
+						reg.push(Integer.toString(this.AC));
+						reg.push(Integer.toString(this.REG));
+					}else{
+						// if stack is full we can't add more information and execute 
+						// this file so we end the program.
+						this.isRUnning = false;
+						System.out.println("stack is full program unable to finish");
+					}
+					
 					
 					// Now the stack has been pushed we take the target PC and set it to the
 					// current PC that we are wanting to start at.
