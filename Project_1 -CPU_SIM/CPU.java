@@ -29,9 +29,13 @@ public class CPU {
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
+		//create a memory object with the default parameters
 		Memory mem = new Memory();
+		
+		//create a CPU object with the default cpu parameters
 		CPU cp = new CPU();
-
+		
+		//create a new stack object with the default parameters
 		Stack reg = new Stack();
 
 		// this is our run method that takes in a valid file input to be executed.
