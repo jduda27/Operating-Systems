@@ -1,4 +1,3 @@
-
 /** Operating Systems Project 1
 *   A CPU class that works with a stack and a memory object to execute a input file
 *   producing an output file.
@@ -25,6 +24,18 @@ public class CPU {
 	private String IR;
 	private int rtn;
 	private int count;
+	
+	// Initializing our default values for the different registers in our CPU
+	public CPU() {
+		AC = 0x0;
+		PC = "0";
+		IR = "0";
+		REG = 0x0;
+		isRunning = true;
+		reset = false;
+		rtn = 0;
+		count = 0;
+	}
 
 	/**
 	 * Main Method This method runs our program to be executed.
@@ -43,91 +54,9 @@ public class CPU {
 		// this is our run method that takes in a valid file input to be executed.
 		cp.run("joshua_duda_input.txt", mem, reg);
 	}
-
-	// Initializing our default values for the different registers in our CPU
-	public CPU() {
-		AC = 0x0;
-		PC = "0";
-		IR = "0";
-		REG = 0x0;
-		isRunning = true;
-		reset = false;
-		rtn = 0;
-		count = 0;
-	}
-
-	/**
-	 * run() Method - This method takes in a valid String "input" for a file name,a
-	 * Memory object mem that has designated memory slots, and a Stack for registers
-	 * and then processes the information through our CPU and outputs the
-	 * information to an output file
-	 * 
-	 * @Preconditions: String input - this needs to be valid file name otherwise it
-	 *                 throws a IOException; Memory mem - this needs to be a valid
-	 *                 memory object to read and write to; Stack registers - this
-	 *                 needs to be a valid stack object to store register
-	 *                 information when entering new subroutines
-	 * @postconditions: This program creates or overwrites a file named
-	 *                  "joshua_duda_output.txt" with a breakdown of registers,
-	 *                  memory, and stack data that is being stored at the end of
-	 *                  each subroutine and main program.
-	 */
-	public void run(String input, Memory mem, Stack registers) throws IOException {
-
-		// Here we are creating a buffered reader for the file entered by the user
-		BufferedReader br = new BufferedReader(new FileReader(input));
-		Scanner line = new Scanner(br);
-
-		// This is our buffered writer that is making a new file that we can write text
-		// to.
-		BufferedWriter bw = new BufferedWriter(new FileWriter("joshua_duda_output.txt"));
-
-		// here we are declaring a blank ArrayList of type String to store the lines
-		// from the program
-		ArrayList<String> aList = new ArrayList<String>();
-
-		// Now, until there are no more lines we add the next line to the array list
-		while (line.hasNext()) {
-			String current = line.nextLine();
-			if (!current.contains("==")) {
-				aList.add(current);
-			}
-		}
-
-		// Now we want to check for memory within our program so we will use the
-		// checkMem() method to look for any declarations for our memory locations
-		for (int i = 0; i < aList.size(); i++) {
-			checkMem(aList.get(i), mem);
-		}
-
-		// we need to find the first PC to start the program so we look at the first
-		// line of code and see the memory location we begin with
-		String[] first = aList.get(0).split(" +");
-		this.PC = Integer.toHexString(Integer.parseInt(first[1], 16));
-
-		// from here we run through every line and use the execute method to interpret
-		// the code
-		for (int i = 0; i < aList.size(); i++) {
-			// when reset is true we go back to the first line so we don't miss any lines
-			if (reset) {
-				i = 0;
-				reset = false;
-			}
-
-			// when isRunning is true we use our execute method to determine what to do with
-			// each line of code
-			if (isRunning) {
-				this.execute(aList.get(i), mem, registers, bw);
-			}
-		}
-
-		// We have finished running the program so we now can close the output file from
-		// writing
-		bw.close();
-	}
-
-	/**
-	 * 
+	
+	/** checkMem() method - takes in a string and memory object to check for memory declarations
+	 *                      and it sets the memory locations with what is declared
 	 * @preconditions: String line - We read in valid string that represents a
 	 *                 single line of code to be checked for a memory declaration;
 	 *                 Memory mem - This is a valid memory object that contains
@@ -151,49 +80,6 @@ public class CPU {
 		// in hex at that memory location.
 		if (opCode.equals("0")) {
 			mem.memSet(code[1], Integer.parseInt(num, 16));
-		}
-	}
-
-	/**
-	 * writeData() Method - This method prints to a file the registers and stack
-	 * when called
-	 * 
-	 * @preconditions Memory mem - this is a valid Memory object that contains
-	 *                locations to save data to; BufferedWritter bw - this is a
-	 *                valid BufferedWritter object that contains a place to write
-	 *                information to; Stack reg - This is a valid stack object that
-	 *                contains register information during subroutines
-	 * @postcondition The method writes the register/memory and stack status to a
-	 *                designated file.
-	 */
-	public void writeData(Memory mem, BufferedWriter bw, Stack reg) throws IOException {
-		// below we write all of the current register and memory location information to
-		// a file. All values are in hex except for the count of instructions executed.
-		bw.write("=============Registers & Memory Status=============\n");
-		bw.write("Accumulator = " + Integer.toHexString(AC).toUpperCase() + "\n");
-		bw.write("Register = " + Integer.toHexString(REG).toUpperCase() + "\n");
-		bw.write("PC = " + PC + "\n");
-		bw.write("IR = " + IR + "\n");
-		bw.write("Memory 940: " + Integer.toHexString(mem.getMem3AC()).toUpperCase() + "\n");
-		bw.write("Memory 941: " + Integer.toHexString(mem.getMem3AD()).toUpperCase() + "\n");
-		bw.write("Memory 942: " + Integer.toHexString(mem.getMem3AE()).toUpperCase() + "\n");
-		bw.write("Number of instructions executed: " + count + "\n");
-
-		// below we check if the register stack is empty if it is not we list the data
-		// in order and assign the values back to their proper places
-		bw.write("=============Stack Status=============\n");
-		if (!reg.isEmpty() && reg.peek() != null) {
-			this.REG = Integer.parseInt(reg.pop());
-			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + REG + "\n");
-			this.AC = Integer.parseInt(reg.pop());
-			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + AC + "\n");
-			this.IR = reg.pop();
-			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + IR + "\n");
-			PC = reg.pop();
-			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + PC + "\n");
-		} else {
-			// if the stack is null or empty we write that there is no data in the stack.
-			bw.write("No Data in Stack!\n");
 		}
 	}
 
@@ -323,4 +209,118 @@ public class CPU {
 			}
 		}
 	}
+	
+	/**
+	 * run() Method - This method takes in a valid String "input" for a file name,a
+	 * Memory object mem that has designated memory slots, and a Stack for registers
+	 * and then processes the information through our CPU and outputs the
+	 * information to an output file
+	 * 
+	 * @Preconditions: String input - this needs to be valid file name otherwise it
+	 *                 throws a IOException; Memory mem - this needs to be a valid
+	 *                 memory object to read and write to; Stack registers - this
+	 *                 needs to be a valid stack object to store register
+	 *                 information when entering new subroutines
+	 * @postconditions: This program creates or overwrites a file named
+	 *                  "joshua_duda_output.txt" with a breakdown of registers,
+	 *                  memory, and stack data that is being stored at the end of
+	 *                  each subroutine and main program.
+	 */
+	public void run(String input, Memory mem, Stack registers) throws IOException {
+
+		// Here we are creating a buffered reader for the file entered by the user
+		BufferedReader br = new BufferedReader(new FileReader(input));
+		Scanner line = new Scanner(br);
+
+		// This is our buffered writer that is making a new file that we can write text
+		// to.
+		BufferedWriter bw = new BufferedWriter(new FileWriter("joshua_duda_output.txt"));
+
+		// here we are declaring a blank ArrayList of type String to store the lines
+		// from the program
+		ArrayList<String> aList = new ArrayList<String>();
+
+		// Now, until there are no more lines we add the next line to the array list
+		while (line.hasNext()) {
+			String current = line.nextLine();
+			if (!current.contains("==")) {
+				aList.add(current);
+			}
+		}
+
+		// Now we want to check for memory within our program so we will use the
+		// checkMem() method to look for any declarations for our memory locations
+		for (int i = 0; i < aList.size(); i++) {
+			checkMem(aList.get(i), mem);
+		}
+
+		// we need to find the first PC to start the program so we look at the first
+		// line of code and see the memory location we begin with
+		String[] first = aList.get(0).split(" +");
+		this.PC = Integer.toHexString(Integer.parseInt(first[1], 16));
+
+		// from here we run through every line and use the execute method to interpret
+		// the code
+		for (int i = 0; i < aList.size(); i++) {
+			// when reset is true we go back to the first line so we don't miss any lines
+			if (reset) {
+				i = 0;
+				reset = false;
+			}
+
+			// when isRunning is true we use our execute method to determine what to do with
+			// each line of code
+			if (isRunning) {
+				this.execute(aList.get(i), mem, registers, bw);
+			}
+		}
+
+		// We have finished running the program so we now can close the output file from
+		// writing
+		bw.close();
+	}
+
+	/**
+	 * writeData() Method - This method prints to a file the registers and stack
+	 * when called
+	 * 
+	 * @preconditions Memory mem - this is a valid Memory object that contains
+	 *                locations to save data to; BufferedWritter bw - this is a
+	 *                valid BufferedWritter object that contains a place to write
+	 *                information to; Stack reg - This is a valid stack object that
+	 *                contains register information during subroutines
+	 * @postcondition The method writes the register/memory and stack status to a
+	 *                designated file.
+	 */
+	public void writeData(Memory mem, BufferedWriter bw, Stack reg) throws IOException {
+		// below we write all of the current register and memory location information to
+		// a file. All values are in hex except for the count of instructions executed.
+		bw.write("=============Registers & Memory Status=============\n");
+		bw.write("Accumulator = " + Integer.toHexString(AC).toUpperCase() + "\n");
+		bw.write("Register = " + Integer.toHexString(REG).toUpperCase() + "\n");
+		bw.write("PC = " + PC + "\n");
+		bw.write("IR = " + IR + "\n");
+		bw.write("Memory 940: " + Integer.toHexString(mem.getMem3AC()).toUpperCase() + "\n");
+		bw.write("Memory 941: " + Integer.toHexString(mem.getMem3AD()).toUpperCase() + "\n");
+		bw.write("Memory 942: " + Integer.toHexString(mem.getMem3AE()).toUpperCase() + "\n");
+		bw.write("Number of instructions executed: " + count + "\n");
+
+		// below we check if the register stack is empty if it is not we list the data
+		// in order and assign the values back to their proper places
+		bw.write("=============Stack Status=============\n");
+		if (!reg.isEmpty() && reg.peek() != null) {
+			this.REG = Integer.parseInt(reg.pop());
+			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + REG + "\n");
+			this.AC = Integer.parseInt(reg.pop());
+			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + AC + "\n");
+			this.IR = reg.pop();
+			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + IR + "\n");
+			PC = reg.pop();
+			bw.write("Stack contents at " + Integer.toHexString(0x3FF - reg.top).toUpperCase() + " = " + PC + "\n");
+		} else {
+			// if the stack is null or empty we write that there is no data in the stack.
+			bw.write("No Data in Stack!\n");
+		}
+	}
+
 }
