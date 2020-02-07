@@ -1,9 +1,11 @@
+
 /** Operating Systems Project 1
 *   A CPU class that works with a stack and a memory object to execute a input file
 *   producing an output file.
 *   @Author Joshua Duda
 *   @Date 2/5/2020
 */
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import java.io.FileWriter;
 
 public class CPU {
 
-	//bellow are all of the private variables the CPU needs to operate
+	// bellow are all of the private variables the CPU needs to operate
 	private int AC;
 	private int REG;
 	private Boolean isRunning;
@@ -29,13 +31,13 @@ public class CPU {
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-		//create a memory object with the default parameters
+		// create a memory object with the default parameters
 		Memory mem = new Memory();
-		
-		//create a CPU object with the default cpu parameters
+
+		// create a CPU object with the default cpu parameters
 		CPU cp = new CPU();
-		
-		//create a new stack object with the default parameters
+
+		// create a new stack object with the default parameters
 		Stack reg = new Stack();
 
 		// this is our run method that takes in a valid file input to be executed.
@@ -226,27 +228,28 @@ public class CPU {
 				i = code.length;
 
 				// since the syntax has the memory location in the 2nd position we can check
-				// with the PC to see if we are reading the correct next line in the program 
+				// with the PC to see if we are reading the correct next line in the program
 			} else if (i == 1) {
-				// if the program counter is equal to the current memory location (in HEX) we finish 
+				// if the program counter is equal to the current memory location (in HEX) we
+				// finish
 				// executing the line and we increase the PC by one for the next instruction;
 				if (code[i].equals(PC)) {
 					PC = Integer.toHexString(Integer.parseInt(PC, 16) + 1).toUpperCase();
 				} else if (Integer.parseInt(code[i], 16) < Integer.parseInt(PC, 16)) {
 					i = code.length; // if we are not equal we skip the rest of the code and
-							 // end the line so we can move on to the next line
+					// end the line so we can move on to the next line
 				}
 
-				// since the proper syntax requires the instruction to be in the 3rd position 
-				// and we catch all comments first, we can take the current memory location's 
+				// since the proper syntax requires the instruction to be in the 3rd position
+				// and we catch all comments first, we can take the current memory location's
 				// instruction and put it into the IR and execute it.
 			} else {
-				count++; //we increase the count of executed commands by one
-				
-				//we set our IR to the current line instruction code.
+				count++; // we increase the count of executed commands by one
+
+				// we set our IR to the current line instruction code.
 				this.IR = code[2];
-				//Now we split up the IR into the two parts, OPcode and Memory Location so we 
-				//have easily execute values
+				// Now we split up the IR into the two parts, OPcode and Memory Location so we
+				// have easily execute values
 				String opCode = this.IR.substring(0, 1);
 				String memLoc = this.IR.substring(1, 4);
 
@@ -275,50 +278,49 @@ public class CPU {
 					this.AC = this.AC / this.REG;
 				} else if (opCode.equals("B")) { // Jump to a Subroutine starting at memLoc
 					this.rtn++; // We increase the amount of subroutines that have been run.
-					
+
 					// Now we push the register to the stack in the correct order PC,IR,AC,REG if
 					// the stack is not full.
-					if(!reg.isFull()){
+					if (!reg.isFull()) {
 						reg.push(this.PC);
 						reg.push(this.IR);
 						reg.push(Integer.toString(this.AC));
 						reg.push(Integer.toString(this.REG));
-					}else{
-						// if stack is full we can't add more information and execute 
+					} else {
+						// if stack is full we can't add more information and execute
 						// this file so we end the program.
-						this.isRUnning = false;
+						this.isRunning = false;
 						System.out.println("stack is full program unable to finish");
 					}
-					
-					
+
 					// Now the stack has been pushed we take the target PC and set it to the
 					// current PC that we are wanting to start at.
 					this.PC = memLoc;
-					
+
 				} else if (opCode.equals("C")) { // Return from subroutine
-					// We set the boolean reset to be true so that we read everyline again so we can catch
+					// We set the boolean reset to be true so that we read every line again so we can
+					// catch
 					// the memory locations we skipped with the PC.
 					this.reset = true;
-					
-					// We write that we are exiting the proper subroutine to the output file and 
+
+					// We write that we are exiting the proper subroutine to the output file and
 					// use the writeData() method to put the needed data to memory.
 					bw.write("\n======Before return from Subroutine " + rtn + " Status=======\n");
 					this.writeData(mem, bw, reg);
 				} else if (opCode.equals("F")) { // Halt Program
-					
+
 					// We write to the output file that the program has ended and use writeData()
-					// nethod to put the needed data to memory.
+					// method to put the needed data to memory.
 					bw.write("\nEnd of Program Status\n");
 					this.writeData(mem, bw, reg);
-					
-					//sset the isRunning boolean to false to stop executing code
+
+					// set the isRunning boolean to false to stop executing code
 					this.isRunning = false;
 				} else {
 					count--; // if we did not execute any commands we remove a number from the count
-						 // since we did not execute.
+					// since we did not execute.
 				}
 			}
 		}
 	}
-
 }
