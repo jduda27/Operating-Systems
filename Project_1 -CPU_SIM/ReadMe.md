@@ -8,6 +8,7 @@ The checkMem() method is used to search the lines that have been entered into th
 **Preconditions:**
 * String line - A valid String object that contains a line of code that contains in order seperated by spaces a line number, the memory location (hex), a 16 bit instruction (hex), and ending with a ; followed by any comments on the same line
 * Memory mem - A valid Memory object that has designated memory locatinos that can be read and written to.
+
 **Postcondition:**
 * 
 ```Java
