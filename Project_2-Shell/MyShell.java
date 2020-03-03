@@ -13,7 +13,7 @@ public class MyShell{
 			if(cmnd.equalsIgnoreCase("exit")){
 				exit = true;
 			}else if(cmnd.equalsIgnoreCase("clear")) {
-				Runtime.getRuntime().exec("cmd /c clear");
+				Runtime.getRuntime().exec("cmd /c cls");
 			}else if(cmnd.equalsIgnoreCase("date")){
 				Runtime.getRuntime().exec("cmd /c date");
 			}else if(arguments[0].equalsIgnoreCase("help")) {
