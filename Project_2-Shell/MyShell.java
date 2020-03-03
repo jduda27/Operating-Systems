@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class shell{
+public class MyShell{
 	public static void run() {
 		String cmnd = null;
 		Scanner input = new Scanner(System.in);
