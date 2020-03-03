@@ -8,14 +8,26 @@ public class shell{
 		while(!exit) {
 			System.out.print(">>> ");
 			cmnd = input.nextLine();
+			String[] arguments = cmnd.split(" ");
 			if(cmnd.equalsIgnoreCase("exit")){
 				exit = true;
-			}else if(cmnd.equalsIgnoreCase("help")) {
+			}else if(arguments[0].equalsIgnoreCase("help")) {
+				if(arguments.length>1) {
+					for(int i =0; i < arguments.length; i++) {
+						if (arguments[i].equals("exit")){
+							System.out.println("exit:\texit\tExit the Current Shell.");
+						}
+						if(arguments[i].equals("date")) {
+							System.out.println("date:\tdate\tPrints out the current date and time information.");
+						}
+					}
+				}else {
 				System.out.println("[Command]\t\t[Description]");
 				System.out.println("date\t\tPrints out the current date and time information.");
-				System.out.println("help\t\tDisplays a list of the commands in this shell. If followed by "
-						+ "a command name, display the description for that command.");
 				System.out.println("exit\t\tExit the current shell.");
+				}
+			}else {
+				System.out.println(cmnd+": command not found");
 			}
 		}
 	}
