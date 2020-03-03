@@ -13,9 +13,9 @@ public class MyShell{
 			if(cmnd.equalsIgnoreCase("exit")){
 				exit = true;
 			}else if(cmnd.equalsIgnoreCase("clear")) {
-				Runtime.getRuntime().exec("clear");
+				Runtime.getRuntime().exec("cmd /c clear");
 			}else if(cmnd.equalsIgnoreCase("date")){
-				Runtime.getRuntime().exec("date");
+				Runtime.getRuntime().exec("cmd /c date");
 			}else if(arguments[0].equalsIgnoreCase("help")) {
 				if(arguments.length>1) {
 					for(int i =0; i < arguments.length; i++) {
