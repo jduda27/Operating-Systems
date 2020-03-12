@@ -1,11 +1,11 @@
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
+public class MyShell {
 
-public class MyShell{
-	
 	public static void shell() throws IOException {
 		String cmnd = null;
+		String line = null;
 		Scanner input = new Scanner(System.in);
 		boolean exit = false;
 		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
@@ -20,13 +20,30 @@ public class MyShell{
 			if (cmnd.equalsIgnoreCase("exit")) {
 				exit = true;
 			} else if (cmnd.equalsIgnoreCase("clear")) {
-				Runtime.getRuntime().exec("clear").getInputStream();
+				try {
+					new ProcessBuilder("sh","-c","clear").inheritIO().start().waitFor();
+				}catch(Exception E){
+					System.out.println(E);
+				}
 			} else if (cmnd.equalsIgnoreCase("date")) {
-				Runtime.getRuntime().exec("date").getOutputStream();
+				Process p = Runtime.getRuntime().exec("sh -c date");
+				BufferedReader StdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				System.out.println(StdInput.readLine());
+			} else if (cmnd.equalsIgnoreCase("ls")) {
+				Process p = Runtime.getRuntime().exec("sh -c ls");
+				BufferedReader StdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				while ((line = StdInput.readLine()) != null) {
+					System.out.println(line);
+				}
 			} else if (cmnd.equalsIgnoreCase("pwd")) {
-				System.out.println(System.getProperty("user.dir"));
+				Process p = Runtime.getRuntime().exec("sh -c pwd");
+				BufferedReader StdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				System.out.println(StdInput.readLine());
 			} else if (cmnd.equalsIgnoreCase("whoami")) {
-				System.out.println(System.getProperty("user.name"));
+				Process p = Runtime.getRuntime().exec("sh -c whoami");
+				// windows equivalent cmd.exe /c %USERNAME%
+				BufferedReader StdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				System.out.println(StdInput.readLine());
 			} else if (arguments[0].equalsIgnoreCase("help")) {
 				if (arguments.length > 1) {
 					for (int i = 0; i < arguments.length; i++) {
